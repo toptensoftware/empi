@@ -1,40 +1,67 @@
 #!/bin/bash
 
-usbipd.exe attach --wsl -i 14cd:1212
+# Change to match USB device
+USB_ID=14cd:1212
 
-sleep 2
+# Change to match card size
+DRIVE_SIZE_GB=14
 
-# Path to your SD card image
-IMG_PATH="build/tmp/deploy/images/raspberrypi0-wifi/core-image-minimal-raspberrypi0-wifi.rootfs.wic.bz2"
+# Path to image
+IMAGE="build/tmp/deploy/images/raspberrypi0-wifi/core-image-minimal-raspberrypi0-wifi.rootfs.wic.bz2"
 
-# Size of your USB drive in GB (approx)
-USB_SIZE_GB=14   # <-- change to match your USB drive size
+# WSL Attach 
+if [ -n "$USB_ID" ]; then
+    usbipd.exe attach --wsl -i $USB_ID
+    sleep 2
+fi
 
 # Find the USB drive by size
-USB_DEVICE=$(lsblk -b -d -o NAME,SIZE | awk -v size=$((USB_SIZE_GB*1024*1024*1024)) \
-    '$2 >= size-1000000000 && $2 <= size+1000000000 {print $1}')
+DEVNAME=$(lsblk -b -d -o NAME,SIZE,RM | awk -v size=$((DRIVE_SIZE_GB*1024*1024*1024)) \
+    '$2 >= size-1000000000 && $2 <= size+1000000000 && $3 == 1 {print $1}')
 
-if [ -z "$USB_DEVICE" ]; then
-    echo "USB drive not found. Check USB_SIZE_GB or mount the USB."
+# Found?
+if [ -z "$DEVNAME" ]; then
+    echo "USB drive not found. Check DRIVE_SIZE_GB or mount the USB."
     exit 1
 fi
 
-echo "Detected USB device: /dev/$USB_DEVICE"
-read -p "Are you sure you want to write $IMG_PATH to /dev/$USB_DEVICE? This will erase it! (y/n): " CONFIRM
+# List details
+lsblk -o NAME,SIZE,MODEL,TRAN /dev/$DEVNAME
 
+# Confirm
+echo "Are you sure you want to write $IMAGE to /dev/$DEVNAME?"
+read -p "This will erase it! (y/n): " CONFIRM
 if [ "$CONFIRM" != "y" ]; then
     echo "Aborting."
     exit 0
 fi
 
 # Write the image
-bunzip2 -c $IMG_PATH | sudo dd of=/dev/"$USB_DEVICE" bs=4M status=progress conv=fsync
+EXT="${IMAGE##*.}"
+case "$EXT" in
+
+    img)
+        sudo dd if="$IMAGE" of=/dev/$DEVNAME bs=1M status=progress conv=fsync
+        ;;
+
+    bz2)
+        bunzip2 -c $IMAGE | sudo dd of=/dev/$DEVNAME bs=4M status=progress conv=fsync
+        ;;
+
+    *)
+        echo "Unknown file type: $extension"
+        exit 1
+        ;;
+
+esac
 
 # Flush writes
 sudo sync
 
-sleep 2
-
-usbipd.exe detach -i 14cd:1212
+# WSL detach
+if [ -n "$USB_ID" ]; then
+    sleep 2
+    usbipd.exe detach -i $USB_ID
+fi
 
 echo "Done! USB image written successfully."
