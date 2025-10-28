@@ -1,0 +1,72 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          wpa-supplicant-wlan0
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start wpa_supplicant for wlan0
+### END INIT INFO
+
+DAEMON=/usr/sbin/wpa_supplicant
+PIDFILE=/var/run/wpa_supplicant.wlan0.pid
+CONFIG=/etc/wpa_supplicant/wpa_supplicant-wlan0.conf
+IFACE=wlan0
+
+case "$1" in
+    start)
+        echo "Starting wpa_supplicant for $IFACE"
+
+        # Load WiFi module if needed
+        modprobe brcmfmac 2>/dev/null || true
+        
+        # Wait for interface to appear
+        for i in 1 2 3 4 5; do
+            if [ -d /sys/class/net/$IFACE ]; then
+                break
+            fi
+            sleep 1
+        done
+        
+        # Bring interface up
+        ip link set $IFACE up
+        
+        # Start wpa_supplicant
+        start-stop-daemon -S -b -m -p $PIDFILE -x $DAEMON -- \
+            -i$IFACE -c$CONFIG -Dnl80211,wext
+        
+        # Wait for connection and get DHCP
+        sleep 3
+        udhcpc -i $IFACE -b -p /var/run/udhcpc.$IFACE.pid -x hostname:$(cat /etc/hostname)
+
+        # Setup clock, once internet access available
+        echo "Setting clock:"
+        for i in 1 2 3 4 5; do
+            if ping -c1 -W2 8.8.8.8 >/dev/null 2>&1; then
+                rdate -s time.nist.gov && break
+            fi
+            sleep 1
+        done
+
+        ;;
+        
+    stop)
+        echo "Stopping wpa_supplicant for $IFACE"
+        start-stop-daemon -K -p $PIDFILE
+        killall udhcpc 2>/dev/null
+        ip link set $IFACE down
+        ;;
+        
+    restart)
+        $0 stop
+        sleep 2
+        $0 start
+        ;;
+        
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0

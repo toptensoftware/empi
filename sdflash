@@ -1,0 +1,40 @@
+#!/bin/bash
+
+usbipd.exe attach --wsl -i 14cd:1212
+
+sleep 2
+
+# Path to your SD card image
+IMG_PATH="build/tmp/deploy/images/raspberrypi0-wifi/core-image-minimal-raspberrypi0-wifi.rootfs.wic.bz2"
+
+# Size of your USB drive in GB (approx)
+USB_SIZE_GB=14   # <-- change to match your USB drive size
+
+# Find the USB drive by size
+USB_DEVICE=$(lsblk -b -d -o NAME,SIZE | awk -v size=$((USB_SIZE_GB*1024*1024*1024)) \
+    '$2 >= size-1000000000 && $2 <= size+1000000000 {print $1}')
+
+if [ -z "$USB_DEVICE" ]; then
+    echo "USB drive not found. Check USB_SIZE_GB or mount the USB."
+    exit 1
+fi
+
+echo "Detected USB device: /dev/$USB_DEVICE"
+read -p "Are you sure you want to write $IMG_PATH to /dev/$USB_DEVICE? This will erase it! (y/n): " CONFIRM
+
+if [ "$CONFIRM" != "y" ]; then
+    echo "Aborting."
+    exit 0
+fi
+
+# Write the image
+bunzip2 -c $IMG_PATH | sudo dd of=/dev/"$USB_DEVICE" bs=4M status=progress conv=fsync
+
+# Flush writes
+sudo sync
+
+sleep 2
+
+usbipd.exe detach -i 14cd:1212
+
+echo "Done! USB image written successfully."

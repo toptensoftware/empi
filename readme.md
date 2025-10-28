@@ -69,3 +69,13 @@ git commit -m "Update submodules"
 
 Images will be in: `build/tmp/deploy/images/raspberrypi0-wifi/`
 
+
+
+## Other Setup
+
+May need this:
+
+```
+sudo locale-gen en_US.UTF-8
+sudo update-locale
+```
