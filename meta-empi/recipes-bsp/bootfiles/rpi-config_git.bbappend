@@ -1,15 +1,10 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
+SRC_URI += "file://config.txt"
+
 do_deploy:append() {
 
-    CONFIG=${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
-    
-    # Use firmware KMS for faster DRM init (like buildroot)
-    sed -i 's/dtoverlay=vc4-kms-v3d/dtoverlay=vc4-fkms-v3d/' $CONFIG
-    
-    # Add initramfs loading to config.txt
-    echo "initramfs initramfs.cpio.lz4 followkernel" >> $CONFIG
-
-    # Load dwc2 device tree overlay for USB support
-    echo "dtoverlay=dwc2,dr_mode=host" >> $CONFIG
+    install -m 0644 ${WORKDIR}/config.txt ${DEPLOYDIR}/${BOOTFILES_DIR_NAME}/config.txt
 
 }
 
