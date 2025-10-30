@@ -1,0 +1,7 @@
+FILESEXTRAPATHS:prepend := "${THISDIR}/${PN}:"
+
+SRC_URI += "file://debug-disable.cfg"
+SRC_URI += "file://no-power-mgmt.cfg"
+SRC_URI += "file://minimal-compression.cfg"
+SRC_URI += "file://no-unused-protocols.cfg"
+#SRC_URI += "file://fast-boot-modules.cfg"

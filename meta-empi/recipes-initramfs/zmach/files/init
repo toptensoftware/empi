@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Mount essential filesystems
+mount -t devtmpfs devtmpfs /dev
+mount -t proc proc /proc
+mount -t sysfs sysfs /sys
+
+# Start app
+echo "zmach: starting" > /dev/kmsg
+/home/root/zmach > /dev/kmsg 2>&1 &
+echo "zmach: started $?" > /dev/kmsg
+
+# Wait for block device
+echo "Waiting for root device /dev/mmcblk0p2..." > /dev/kmsg
+COUNT=0
+while [ ! -b /dev/mmcblk0p2 ]; do
+    if [ $COUNT -gt 50 ]; then
+        echo "ERROR: Timeout waiting for /dev/mmcblk0p2" > /dev/kmsg
+        echo "Available block devices:" > /dev/kmsg
+        ls -l /dev/mmcblk*  > /dev/kmsg
+    fi
+    usleep 100000  # 100ms
+    COUNT=$((COUNT + 1))
+done
+
+echo "Found /dev/mmcblk0p2, mounting..." > /dev/kmsg
+
+# Mount the real rootfs
+mount -t ext4 /dev/mmcblk0p2 /mnt/root
+
+mount -t devtmpfs none /mnt/root/dev
+
+# Clean up
+umount /proc
+umount /sys
+#umount /dev
+
+# Switch to the real rootfs
+exec /bin/busybox switch_root /mnt/root /sbin/init
