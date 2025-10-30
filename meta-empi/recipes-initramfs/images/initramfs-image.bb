@@ -6,6 +6,12 @@ PACKAGE_INSTALL = "busybox zmach"
 # Add required libraries for OpenGL/graphics
 PACKAGE_INSTALL += "zlib expat libgcc libstdc++ libdrm mesa-megadriver"
 
+# Add MMC modules needed to mount rootfs
+PACKAGE_INSTALL += "kernel-module-mmc-core"
+PACKAGE_INSTALL += "kernel-module-mmc-block"
+PACKAGE_INSTALL += "kernel-module-bcm2835-sdhost"
+PACKAGE_INSTALL += "kernel-module-ext4"
+
 # This is an initramfs image
 IMAGE_FSTYPES = "cpio.lz4"
 

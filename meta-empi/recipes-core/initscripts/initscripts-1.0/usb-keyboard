@@ -1,0 +1,25 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          usb-keyboard
+# Required-Start:    $local_fs
+# Required-Stop:
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: Load USB keyboard modules
+### END INIT INFO
+
+case "$1" in
+  start)
+    echo "Loading USB keyboard modules..."
+    modprobe dwc2
+    modprobe usbhid
+    [ $? = 0 ] && echo "OK" || echo "FAIL"
+    ;;
+  stop)
+    ;;
+  *)
+    echo "Usage: $0 {start|stop}"
+    exit 1
+esac
+
+exit 0

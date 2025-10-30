@@ -10,6 +10,14 @@ echo "zmach: starting" > /dev/kmsg
 /home/root/zmach > /dev/kmsg 2>&1 &
 echo "zmach: started $?" > /dev/kmsg
 
+# Load MMC modules needed for rootfs
+echo "Loading MMC modules..." > /dev/kmsg
+modprobe mmc_core
+modprobe bcm2835_sdhost
+modprobe mmc_block
+modprobe ext4
+
+
 # Wait for block device
 echo "Waiting for root device /dev/mmcblk0p2..." > /dev/kmsg
 COUNT=0

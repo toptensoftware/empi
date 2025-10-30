@@ -8,6 +8,9 @@ do_deploy:append() {
     # Add initramfs loading to config.txt
     echo "initramfs initramfs.cpio.lz4 followkernel" >> $CONFIG
 
+    # Load dwc2 device tree overlay for USB support
+    echo "dtoverlay=dwc2,dr_mode=host" >> $CONFIG
+
 }
 
 
