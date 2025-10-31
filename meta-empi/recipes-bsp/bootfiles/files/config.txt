@@ -8,6 +8,9 @@ initial_turbo=15  # Turbo mode for first 15 seconds to speed boot
 # Use firmware KMS for faster graphics init
 dtoverlay=vc4-fkms-v3d
 
+# Enable audio
+dtparam=audio=on
+
 # Load initramfs
 initramfs initramfs.cpio.lz4 followkernel
 
