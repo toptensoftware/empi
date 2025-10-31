@@ -8,3 +8,5 @@ SRC_URI += "file://fast-boot-modules.cfg"
 SRC_URI += "file://dwc2-enable.cfg"
 SRC_URI += "file://no-fbcon.cfg"
 SRC_URI += "file://no-cmdline.cfg"
+SRC_URI += "file://size-reduction.cfg"
+

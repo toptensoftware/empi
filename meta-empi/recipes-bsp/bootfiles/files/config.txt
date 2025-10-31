@@ -1,3 +1,10 @@
+# Fast boot options
+boot_delay=0
+disable_splash=1
+boot_delay_ms=0
+uart_2ndstage=0
+initial_turbo=15  # Turbo mode for first 15 seconds to speed boot
+
 # Use firmware KMS for faster graphics init
 dtoverlay=vc4-fkms-v3d
 
