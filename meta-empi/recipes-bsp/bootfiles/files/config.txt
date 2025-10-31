@@ -1,6 +1,3 @@
-# Enable UART (for emergency debugging)
-enable_uart=1
-
 # Use firmware KMS for faster graphics init
 dtoverlay=vc4-fkms-v3d
 
@@ -9,4 +6,6 @@ initramfs initramfs.cpio.lz4 followkernel
 
 # Enable USB host mode
 dtoverlay=dwc2,dr_mode=host
+
+# enable_uart=1
 

@@ -1,4 +1,8 @@
-# Override to provide empty cmdline.txt
+FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
+SRC_URI = "file://cmdline.txt"
+
 do_compile() {
-    echo "" > "${WORKDIR}/cmdline.txt"
+    # File is already in WORKDIR from SRC_URI, nothing to do
+    :
 }

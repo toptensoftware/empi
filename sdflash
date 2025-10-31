@@ -7,7 +7,7 @@ USB_ID=14cd:1212
 DRIVE_SIZE_GB=14
 
 # Path to image
-IMAGE="build/tmp/deploy/images/raspberrypi0-wifi/core-image-minimal-raspberrypi0-wifi.rootfs.wic.bz2"
+IMAGE="build/tmp/deploy/images/raspberrypi0-wifi/core-image-minimal-raspberrypi0-wifi.rootfs.wic"
 
 # WSL Attach 
 if [ -n "$USB_ID" ]; then
@@ -40,7 +40,7 @@ fi
 EXT="${IMAGE##*.}"
 case "$EXT" in
 
-    img)
+    img|wic)
         sudo dd if="$IMAGE" of=/dev/$DEVNAME bs=1M status=progress conv=fsync
         ;;
 
