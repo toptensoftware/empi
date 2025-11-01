@@ -16,4 +16,4 @@ sdk:
 	$(call bitbake,core-image-minimal -c populate_sdk)
 	scp \
 		/home/brad/Projects/empi/build/tmp/deploy/sdk/empi-glibc-x86_64-core-image-minimal-arm1176jzfshf-vfp-raspberrypi0-wifi-toolchain-5.0.13.sh \
-		brad@cool:/home/brad/transfer/
+		brad@cool:/mnt/storage/public/
