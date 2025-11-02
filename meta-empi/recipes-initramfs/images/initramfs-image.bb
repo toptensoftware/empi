@@ -5,7 +5,7 @@ DESCRIPTION = "Minimal initramfs image for early boot"
 PACKAGE_INSTALL = "busybox zmach"
 
 # Add required libraries for OpenGL/graphics
-PACKAGE_INSTALL += "zlib expat libgcc libstdc++ libdrm mesa-megadriver"
+PACKAGE_INSTALL += "zlib expat libgcc libstdc++ libdrm mesa-megadriver alsa-lib"
 
 # Add MMC modules needed to mount rootfs
 PACKAGE_INSTALL += "kernel-module-mmc-core"

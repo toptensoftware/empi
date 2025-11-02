@@ -17,7 +17,6 @@ static void kmsg_write(const char *msg) {
     int fd = open(KMSG_PATH, O_WRONLY);
     if (fd >= 0) {
         write(fd, msg, strlen(msg));
-        write(fd, "\n", 1);
         close(fd);
     }
 }
@@ -79,7 +78,7 @@ int main(void) {
         dup2(fd, STDOUT_FILENO);
         dup2(fd, STDERR_FILENO);
         close(fd);
-        execl("/home/root/zmach", "zmach", "--media-root", "/mnt/root/home/root", NULL);
+        execl("/home/root/zmach", "zmach", "--media-root", "/proc/1/root/home/root", NULL);
         _exit(1);
     }
     kmsg_write("zmach: started");
@@ -118,8 +117,8 @@ int main(void) {
     mount("none", "/mnt/root/dev", "devtmpfs", 0, NULL);
     
     // Clean up
-    umount("/proc");
-    umount("/sys");
+    //umount("/proc");
+    //umount("/sys");
     
     // Switch to the real rootfs
     if (chdir("/mnt/root") < 0 ||

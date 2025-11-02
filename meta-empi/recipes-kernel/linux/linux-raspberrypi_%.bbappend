@@ -9,4 +9,5 @@ SRC_URI += "file://dwc2-enable.cfg"
 SRC_URI += "file://no-fbcon.cfg"
 SRC_URI += "file://no-cmdline.cfg"
 SRC_URI += "file://size-reduction.cfg"
+SRC_URI += "file://builtin-sound.cfg"
 
