@@ -79,7 +79,7 @@ int main(void) {
         dup2(fd, STDOUT_FILENO);
         dup2(fd, STDERR_FILENO);
         close(fd);
-        execl("/home/root/zmach", "zmach", NULL);
+        execl("/home/root/zmach", "zmach", "--media-root", "/mnt/root/home/root", NULL);
         _exit(1);
     }
     kmsg_write("zmach: started");
