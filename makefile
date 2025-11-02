@@ -17,3 +17,7 @@ sdk:
 	scp \
 		/home/brad/Projects/empi/build/tmp/deploy/sdk/empi-glibc-x86_64-core-image-minimal-arm1176jzfshf-vfp-raspberrypi0-wifi-toolchain-5.0.13.sh \
 		brad@cool:/mnt/storage/public/
+
+zmach:
+	(cd ../zmach/src/linux && mk --rebuild config=release)
+	cp ../zmach/src/linux/build/linux/release/bin/zmach ./meta-empi/recipes-initramfs/zmach/files/
